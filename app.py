@@ -1,16 +1,17 @@
 from celery import Celery
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
-import logging
 import os
 import pandas as pd
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.join(basedir, "database", "app.db")
-app.config['CELERY_BROKER_URL'] = "redis://localhost:6379/0"
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.join(basedir, "app.db")
+# app.config['CELERY_BROKER_URL'] = "redis://localhost:6379/0"
+# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+app.config['CELERY_BROKER_URL'] = "redis://YD5m+W0cEMIk9uKL8FOfVXGlT1fLBYisOJeeo5sp9Tw=@asyncwebservice.redis.cache.windows.net:6379/0"
+app.config['CELERY_RESULT_BACKEND'] = 'redis://YD5m+W0cEMIk9uKL8FOfVXGlT1fLBYisOJeeo5sp9Tw=@asyncwebservice.redis.cache.windows.net:6379/0'
 app.config['CELERY_ACCEPT_CONTENT'] = ['json']
 app.config['CELERY_TASK_SERIALIZER'] = "json"
 app.config['CELERY_RESULT_SERIALIZER'] = "json"
@@ -85,9 +86,6 @@ def upload():
         data = request.form["data"]
         field = request.form["field"]
         count = int(request.form["count"])
-        logging.info("Params got")
-
-        logging.info("Sorting started")
         sort.delay(data, field, count)
         return "Success!"
     except Exception as e:
